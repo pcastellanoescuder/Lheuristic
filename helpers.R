@@ -1,0 +1,6 @@
+library(shiny) 
+library(DT)
+library(shinydashboard)
+library(ggplot2)
+library(plotly)
+library(dashboardthemes) 
