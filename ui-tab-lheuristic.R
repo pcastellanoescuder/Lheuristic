@@ -1,6 +1,6 @@
 
 fluidRow(
-  column(width = 3,
+  column(width = 4,
          wellPanel(
 tabsetPanel(
   tabPanel("Demo data", br(),br(),
