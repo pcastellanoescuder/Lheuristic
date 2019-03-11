@@ -2,69 +2,18 @@
 fluidRow(
   column(width = 4,
          wellPanel(
-tabsetPanel(
-  tabPanel("Demo data", br(),br(),
-           helpText("You can use pre-loaded data to see how this application works.",
-                    "Just choose an example and go to the 'settings' tab, set the paramaters as you wish,",
-                    "and click 'show genes'."),
-           helpText("If you want to work with your own data, go to the 'upload data'",
-                    "tab and upload your files. Once your data is loaded, go to the 'settings' tab."),
-           radioButtons('dataset', 'Choose a demo analysis',
-                        c("GEO Dataset (All)"="GEOAll",
-                          "GEO Dataset (TRUE)"="GEOtrue"
-                        ), selected="GEOAll")
-  ),
-  tabPanel("Upload data",
-           h3("Choose input files"),
-           fileInput('metfile', 'Upload your methylation array',
-                     accept = c('text/csv','.csv')),
-           p(strong('Set format parameters of your','methylation data file')),
-           fluidRow(
-             column(4,radioButtons('sep1', 'Separator',
-                                   c(Tab='\t',
-                                     Comma=',',
-                                     Semicolon=';'),
-                                   ';')),
-             column(4,radioButtons('dec1', 'Decimal',
-                                   c(Point='.',
-                                     Comma=','),
-                                   ',')),
-             column(4,radioButtons('quote1', 'Quote',
-                                   c(None='',
-                                     'Double'='"',
-                                     'Single'="'"),
-                                   '"'))),
-           fileInput('exprfile', 'Upload your expression microarray or RNAseq',
-                     accept = c('text/csv',
-                                '.csv')),
-           p(strong('Set format parameters of your','expression data file')),
-           fluidRow(
-             column(4,radioButtons('sep2', 'Separator',
-                                   c(Tab='\t',
-                                     Comma=',',
-                                     Semicolon=';'),
-                                   ';')),
-             column(4,radioButtons('dec2', 'Decimal',
-                                   c(Point='.',
-                                     Comma=','),
-                                   ',')),
-             column(4,radioButtons('quote2', 'Quote',
-                                   c(None='',
-                                     'Double'='"',
-                                     'Single'="'"),
-                                   '"')
-             )
-           )
-  ),
-  tabPanel("Settings",
+           
            h3("Select L-shape parameters", align = "left"),
            fluidRow(column(8,
                            numericInput("Ngenes",label = "Number of genes to analyse", 
                                         value = 200, min = 0)),
                     column(4,br(),
                            checkboxInput("allgenes", label="select all"), value=FALSE)),
-           fluidRow( column(8, br(),
-                            actionButton("submit","Select genes"))),  
+           
+           fluidRow(column(3, offset = 8, actionButton("submit","Select genes", icon("check"),
+                                                       style="color: #fff; background-color: #CD0000; border-color: #9E0000"))),
+      
+           br(),
            br(),
            
            sliderInput("xaxis", "Coordinates of vertical points in the x-axis",
@@ -117,7 +66,6 @@ tabsetPanel(
                     column(3,
                            numericInput("w33", label = NULL, value = 2))
            ),
-           fluidRow(column(3, offset = 9, actionButton("reset","Reset"))),
            
            p(strong("Set the matrix of weights for FALSE L scatterplots")),
            fluidRow(column(3, offset = 1,
@@ -142,25 +90,11 @@ tabsetPanel(
                            numericInput("wf33", label = NULL, value = 0))
            ),
            fluidRow(column(3, offset = 9, actionButton("reset","Reset")))
-  )))),
+  )),
 
 column(width = 8,
        
   fluidPage(tabsetPanel(
-    tabPanel("View", br(),
-             fluidRow(
-               column(12,
-                      h4("Methylation Data"),
-                      tabPanel("Tabla", dataTableOutput("tab"))
-               ),
-               column(12,
-                      
-                      h4("Expression Data"),
-                      tabPanel("Tabla", dataTableOutput("tab2"))
-               )
-             )
-             
-    ),
     
     tabPanel("All Genes", br(),
              fluidRow(

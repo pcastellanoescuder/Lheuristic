@@ -2,36 +2,37 @@ options(repos = BiocInstaller::biocinstallRepos())
 getOption("repos")
 
 source("helpers.R")
-#source("themes.R")
 
-dashboardPage(skin = "black", 
+dashboardPage(
               
-              dashboardHeader(title = "Selection of L-shaped genes using a heuristic algorithm"),
+              dashboardHeader(title = "Selection of L-shaped genes using a heuristic algorithm", titleWidth = 600),
               
               dashboardSidebar(sidebarMenu(
                 menuItem("Home", tabName = "home", icon = icon("home")),
-                #menuItem("Correlations", tabName = "correlations", icon = icon("wrench")),
-                menuItem("L-heuristic", tabName = "lheuristic", icon = icon("sliders")),
+                menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
+                menuItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
+                menuItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined")),
                 #menuItem("Joint analysis", tabName = "jointanalysis", icon = icon("sliders")),
                 menuItem("Help", tabName = "help", icon = icon("question"))
                 
               )),
               dashboardBody(
                 
-                #poma_theme,
-                
+                shinyDashboardThemes(
+                  theme = "grey_light"),
+
                 tags$head(
                   tags$link(rel = "stylesheet", type = "text/css", href = "mycss.css")
                 ),
                 tabItems(
                   tabItem(tabName = "home",
                           source("ui-tab-home.R",local=TRUE)$value),
-                  #tabItem(tabName = "correlations",
-                         # source("ui-tab-correlations.R",local=TRUE)$value),
+                  tabItem(tabName = "correlations",
+                          source("ui-tab-correlations.R",local=TRUE)$value),
                   tabItem(tabName = "lheuristic",
                           source("ui-tab-lheuristic.R",local=TRUE)$value),
-                  #tabItem(tabName = "jointanalysis",
-                   #       source("ui-tab-jointanalysis.R",local=TRUE)$value),
+                  tabItem(tabName = "upload",
+                          source("ui-tab-upload.R",local=TRUE)$value),
                   tabItem(tabName = "help",
                           source("ui-tab-help.R",local=TRUE)$value)
                   
