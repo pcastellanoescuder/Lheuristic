@@ -5,7 +5,8 @@ source("helpers.R")
 
 dashboardPage(
               
-              dashboardHeader(title = "Selection of L-shaped genes using a heuristic algorithm", titleWidth = 600),
+              dashboardHeader(title = "Selection of L-shaped genes using a heuristic algorithm", 
+                              titleWidth = 600),
               
               dashboardSidebar(sidebarMenu(
                 menuItem("Home", tabName = "home", icon = icon("home")),

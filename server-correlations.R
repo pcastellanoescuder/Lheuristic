@@ -8,7 +8,8 @@ Selection <-
     
     x <- colnames(c.data)
     updateSelectInput(session,"one", choices = x[1:ncol(metFile())], selected = x[1])
-    updateSelectInput(session,"two", choices = x[(ncol(metFile())+1):(ncol(metFile())+ncol(exprFile()))], selected = x[ncol(metFile())+1])
+    updateSelectInput(session,"two", choices = x[(ncol(metFile())+1):(ncol(metFile())+ncol(exprFile()))], 
+                      selected = x[ncol(metFile())+1])
     print(c.data)
   })
 
@@ -44,8 +45,6 @@ Correlation_plot <-
                     
                     return(list(c.data = c.data, correlation_plot = correlation_plot,
                                 One = One, Two = Two, TOTAL = TOTAL))
-
-
                 })
 
 
