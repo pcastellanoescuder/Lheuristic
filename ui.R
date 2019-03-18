@@ -20,7 +20,7 @@ dashboardPage(
               dashboardBody(
                 
                 shinyDashboardThemes(
-                  theme = "grey_light"),
+                  theme = "onenote"),
 
                 tags$head(
                   tags$link(rel = "stylesheet", type = "text/css", href = "mycss.css")
@@ -44,6 +44,7 @@ dashboardPage(
                 ## FOOTER
                 
                 tags$footer(p(HTML("<b>Statistics and Bioinformatics Research Group</b>"), align="center",width=3),
+                            p(("Department of Genetics, Microbiology and Statistics"),align="center",width=3),
                             p(("University of Barcelona"),align="center",width=3),
                             p(("Copyright (C) 2019, code licensed under GPLv3"),align="center",width=4),
                             p(("Code available on Github:"),a("https://github.com/alexsanchezpla", 

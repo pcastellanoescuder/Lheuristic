@@ -24,7 +24,8 @@ fluidRow(
                       plotOutput("cor_plot"),
                       br(),
                       textOutput("text")),
-             tabPanel("Global Correlation Plot", plotOutput("corr_plot", height = 700))
+             tabPanel("Global Correlation Plot", plotOutput("corr_plot", height = 700)),
+             tabPanel("Table of Correlations", dataTableOutput("corr_table"))
            ))
 
   ))
