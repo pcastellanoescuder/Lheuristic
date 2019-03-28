@@ -11,9 +11,11 @@ dashboardPage(
               dashboardSidebar(sidebarMenu(
                 menuItem("Home", tabName = "home", icon = icon("home")),
                 menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
-                menuItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
-                menuItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined")),
-                #menuItem("Joint analysis", tabName = "jointanalysis", icon = icon("sliders")),
+                
+                
+                menuItem("Analysis", tabName = "analysis", icon = icon("sliders"), startExpanded = FALSE,
+                         menuSubItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
+                         menuSubItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined"))),
                 menuItem("Help", tabName = "help", icon = icon("question"))
                 
               )),

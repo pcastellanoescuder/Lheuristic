@@ -3,13 +3,9 @@ fluidRow(
   column(width = 3,
                 wellPanel(
   
-                  h4("Correlation between:"),
+                  h4("Correlations:"),
                   
-                  selectInput("one",label="Variable 1", choices = NULL),
-                  
-                  h4("and"),
-                  
-                  selectInput("two",label="Variable 2", choices = NULL), 
+                  selectInput("one",label="Gene", choices = NULL),
                   
                   radioButtons("corr_method", "Correlation Method:", c("Pearson" = "pearson",
                                                                        "Spearman" = "spearman",

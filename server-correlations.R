@@ -4,12 +4,11 @@ Selection <-
   
   reactive({
     
-    c.data <- cbind(metFile(), exprFile())
+    c.data <- metFile()
     
     x <- colnames(c.data)
-    updateSelectInput(session,"one", choices = x[1:ncol(metFile())], selected = x[1])
-    updateSelectInput(session,"two", choices = x[(ncol(metFile())+1):(ncol(metFile())+ncol(exprFile()))], 
-                      selected = x[ncol(metFile())+1])
+    updateSelectInput(session,"one", choices = x, selected = x[1])
+
     print(c.data)
   })
 
@@ -17,30 +16,29 @@ Selection <-
 Correlation_plot <- 
   
   reactive({
-                    
-                    c.data2 <- Selection()
+    
+    met <- metFile()
+    exp <- exprFile()
                     
                     One <- as.character(input$one)
-                    Two <- as.character(input$two)
+
+                    One.df <- met[, colnames(met) == One]
                     
-                    One.df <- as.data.frame(c.data2[, colnames(c.data2) == One])
+                    Two.df <- exp[, colnames(exp) == One]
                     
-                    Two.df <- as.data.frame(c.data2[, colnames(c.data2) == Two])
+                    TOTAL <- as.data.frame(cbind(One.df, Two.df))
+                    colnames(TOTAL) <- c("Gene Methylation", "Gene Expression")
                     
-                    TOTAL <- cbind(One.df[1], Two.df[1])
-                    colnames(TOTAL) <- c("Variable 1", "Variable 2")
-                    
-                    correlation_plot <- ggplot(TOTAL, aes(x = `Variable 1`, y = `Variable 2`)) + 
+                    correlation_plot <- ggplot(TOTAL, aes(x = `Gene Methylation`, y = `Gene Expression`)) + 
                                                    geom_point() +
-                                                   xlab(One) + 
-                                                   ylab(Two) + 
+                                                   xlab("Gene Methylation") + 
+                                                   ylab("Gene Expression") + 
                                                    theme(legend.position="none") + 
                                                    theme_minimal()
                     
                     ####
                     
-                    return(list(c.data2 = c.data2, correlation_plot = correlation_plot,
-                                One = One, Two = Two, TOTAL = TOTAL))
+                    return(list(correlation_plot = correlation_plot, One = One, TOTAL = TOTAL))
                 })
 
 
@@ -48,7 +46,13 @@ Correlation_plot <-
 
 output$corr_plot <- renderPlot({
   
-  c.data <- Correlation_plot()$c.data2
+  met <- metFile()
+  exp <- exprFile()
+  
+  rownames(met) <- paste0(rownames(met), "_MET")
+  rownames(exp) <- paste0(rownames(exp), "_EXP")
+  
+  c.data <- cbind(met, exp)
   
   c.data <- as.matrix(round(cor(c.data), 3))
   
@@ -62,19 +66,22 @@ output$cor_plot <- renderPlot({
 
 output$text <- renderText({
   One <- Correlation_plot()$One
-  Two <- Correlation_plot()$Two
   TOTAL <- Correlation_plot()$TOTAL
     
-  paste0("The ",input$corr_method," correlation between ", One," and ", Two, " is ",
-         round(cor(TOTAL$`Variable 1`, TOTAL$`Variable 2`, method = input$corr_method),3),
+  paste0("The ",input$corr_method," correlation between methylation and expression in ", One," gene is ",
+         round(cor(TOTAL$`Gene Methylation`, TOTAL$`Gene Expression`, method = input$corr_method),3),
          " and p-value is ", 
-         round(cor.test(TOTAL$`Variable 1`, TOTAL$`Variable 2`, 
+         round(cor.test(TOTAL$`Gene Methylation`, TOTAL$`Gene Expression`, 
                         method = input$corr_method)$p.value,3))
 })
 
+
 output$corr_table <- renderDataTable({
   
-  c.data <- Selection()
+  met <- metFile()
+  exp <- exprFile()
+  
+  c.data <- cbind(met, exp)
   
   flat_cor_mat <- function(cor_r, cor_p){
     cor_r <- rownames_to_column(as.data.frame(cor_r), var = "row")
@@ -95,6 +102,6 @@ output$corr_table <- renderDataTable({
   my_cor_matrix <- my_cor_matrix[!duplicated(my_cor_matrix[, 1:2]) ,]
   
   datatable(my_cor_matrix, rownames = FALSE)
-
+  
 })
   
