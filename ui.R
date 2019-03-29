@@ -11,8 +11,6 @@ dashboardPage(
               dashboardSidebar(sidebarMenu(
                 menuItem("Home", tabName = "home", icon = icon("home")),
                 menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
-                
-                
                 menuItem("Analysis", tabName = "analysis", icon = icon("sliders"), startExpanded = FALSE,
                          menuSubItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
                          menuSubItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined"))),

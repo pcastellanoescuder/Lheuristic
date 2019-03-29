@@ -3,7 +3,7 @@ fluidRow(
   column(width = 4,
          wellPanel(
            
-           h3("Select L-shape parameters", align = "left"),
+           h3("Select L-shape parameters:", align = "left"),
            fluidRow(column(8,
                            numericInput("Ngenes",label = "Number of genes to analyse", 
                                         value = 200, min = 0)),

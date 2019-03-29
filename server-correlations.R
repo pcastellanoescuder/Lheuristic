@@ -1,16 +1,13 @@
 
-
-Selection <- 
+observe({
   
-  reactive({
-    
-    c.data <- metFile()
-    
-    x <- colnames(c.data)
-    updateSelectInput(session,"one", choices = x, selected = x[1])
-
-    print(c.data)
-  })
+  c.data <- metFile()
+  
+  c.data <- as.data.frame(t(c.data))
+  
+  x <- colnames(c.data)
+  updateSelectInput(session,"one", choices = x, selected = x[1])
+})
 
 
 Correlation_plot <- 
@@ -18,7 +15,10 @@ Correlation_plot <-
   reactive({
     
     met <- metFile()
+    met <- as.data.frame(t(met))
+    
     exp <- exprFile()
+    exp <- as.data.frame(t(exp))
                     
                     One <- as.character(input$one)
 
@@ -29,12 +29,34 @@ Correlation_plot <-
                     TOTAL <- as.data.frame(cbind(One.df, Two.df))
                     colnames(TOTAL) <- c("Gene Methylation", "Gene Expression")
                     
-                    correlation_plot <- ggplot(TOTAL, aes(x = `Gene Methylation`, y = `Gene Expression`)) + 
-                                                   geom_point() +
-                                                   xlab("Gene Methylation") + 
-                                                   ylab("Gene Expression") + 
-                                                   theme(legend.position="none") + 
-                                                   theme_minimal()
+                    if(input$smooth == TRUE){
+                      
+                      correlation_plot <- 
+                        ggplot(TOTAL, aes(x = `Gene Methylation`, y = `Gene Expression`)) + 
+                        geom_point(size = 3) +
+                        xlab(paste0(One, " Gene Methylation")) + 
+                        ylab(paste0(One, " Gene Expression")) + 
+                        theme_minimal() + 
+                        geom_smooth(method=lm, color=input$smooth_color) +
+                        geom_rug() +
+                        theme(axis.text=element_text(size=12),
+                              axis.title=element_text(size=14,face="bold"),
+                              legend.position="none")
+                      
+                    } else {
+                      
+                      correlation_plot <- 
+                        ggplot(TOTAL, aes(x = `Gene Methylation`, y = `Gene Expression`)) + 
+                        geom_point(size = 3) +
+                        xlab(paste0(One, " Gene Methylation")) + 
+                        ylab(paste0(One, " Gene Expression")) + 
+                        theme_minimal() + 
+                        geom_rug() +
+                        theme(axis.text=element_text(size=12),
+                              axis.title=element_text(size=14,face="bold"),
+                              legend.position="none")
+                      
+                    }
                     
                     ####
                     
@@ -47,16 +69,19 @@ Correlation_plot <-
 output$corr_plot <- renderPlot({
   
   met <- metFile()
-  exp <- exprFile()
+  met <- as.data.frame(t(met))
   
-  rownames(met) <- paste0(rownames(met), "_MET")
-  rownames(exp) <- paste0(rownames(exp), "_EXP")
+  exp <- exprFile()
+  exp <- as.data.frame(t(exp))
+  
+  colnames(met) <- paste0(colnames(met), "_MET")
+  colnames(exp) <- paste0(colnames(exp), "_EXP")
   
   c.data <- cbind(met, exp)
   
   c.data <- as.matrix(round(cor(c.data), 3))
   
-  corrplot(c.data, method="color", type = "lower", tl.srt = 2)
+  corrplot(c.data, method="color", type = "lower", tl.srt = 2, tl.cex = 0.6)
   
 })
 
@@ -75,33 +100,82 @@ output$text <- renderText({
                         method = input$corr_method)$p.value,3))
 })
 
+output$download_plot <- downloadHandler(
+  filename =  function() {
+    paste0("Pairwise_correlation_", Sys.Date())
+  },
+  # content is a function with argument file. content writes the plot to the device
+  content = function(file) {
+      pdf(file) # open the pdf device
+
+    print(Correlation_plot()$correlation_plot) # for GGPLOT
+    dev.off()  # turn the device off
+    
+  }) 
+
+output$download_plot2 <- downloadHandler(
+  filename =  function() {
+    paste0("Global_correlations_", Sys.Date())
+  },
+  # content is a function with argument file. content writes the plot to the device
+  content = function(file) {
+    pdf(file) # open the pdf device
+    
+    met <- metFile()
+    met <- as.data.frame(t(met))
+    exp <- exprFile()
+    exp <- as.data.frame(t(exp))
+    colnames(met) <- paste0(colnames(met), "_MET")
+    colnames(exp) <- paste0(colnames(exp), "_EXP")
+    c.data <- cbind(met, exp)
+    c.data <- as.matrix(round(cor(c.data), 3))
+    
+    print(corrplot(c.data, method="color", type = "lower", tl.srt = 2, tl.cex = 0.6)) # for GGPLOT
+    dev.off()  # turn the device off
+    
+  }) 
 
 output$corr_table <- renderDataTable({
-  
-  met <- metFile()
-  exp <- exprFile()
-  
-  c.data <- cbind(met, exp)
-  
-  flat_cor_mat <- function(cor_r, cor_p){
-    cor_r <- rownames_to_column(as.data.frame(cor_r), var = "row")
-    cor_r <- gather(cor_r, column, cor, -1)
-    cor_p <- rownames_to_column(as.data.frame(cor_p), var = "row")
-    cor_p <- gather(cor_p, column, p, -1)
-    cor_p_matrix <- left_join(cor_r, cor_p, by = c("row", "column"))
-    cor_p_matrix
-  }
-  
-  c.data <- rcorr(as.matrix(c.data))
-  
-  my_cor_matrix <- flat_cor_mat(c.data$r, c.data$P)
-  my_cor_matrix$fdr <- p.adjust(my_cor_matrix$p, method = "fdr")
-  my_cor_matrix[, 3:5] <- round(my_cor_matrix[, 3:5], 4)
-  my_cor_matrix <- my_cor_matrix[my_cor_matrix$row != my_cor_matrix$column ,]
-  colnames(my_cor_matrix) <- c("Variable 1", "Variable 2", "correlation", "p.value", "fdr")
-  my_cor_matrix <- my_cor_matrix[!duplicated(my_cor_matrix[, 1:2]) ,]
+
   
   datatable(my_cor_matrix, rownames = FALSE)
   
 })
+
+output$corr_table <- DT::renderDataTable({
   
+  met <- metFile()
+  met <- as.data.frame(t(met))
+  
+  exp <- exprFile()
+  exp <- as.data.frame(t(exp))
+  
+  my_cor_matrix <- data.frame(Gene = rep(NA, ncol(met)), Correlation = rep(NA, ncol(met)), p.value = rep(NA, ncol(met)))
+  
+  for (i in 1:ncol(met)){
+    my_cor_matrix$Gene[i] <- colnames(met)[i]
+    my_cor_matrix$Correlation[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$estimate,3)
+    my_cor_matrix$p.value[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$p.value,3)
+  }
+  
+  my_cor_matrix$FDR <- round(p.adjust(my_cor_matrix$p.value, method = "fdr"),3)
+  
+  datatable(my_cor_matrix, 
+                filter = 'none',extensions = 'Buttons',
+                escape=FALSE,  rownames=FALSE, class = 'cell-border stripe',
+                options = list(
+                  dom = 'Bfrtip',
+                  buttons = 
+                    list("copy", "print", list(
+                      extend="collection",
+                      buttons=list(list(extend="csv",
+                                        filename="correlation_table"),
+                                   list(extend="excel",
+                                        filename="correlation_table"),
+                                   list(extend="pdf",
+                                        filename="correlation_table")),
+                      text="Dowload")),
+                  order=list(list(2, "desc")),
+                  pageLength = nrow(my_cor_matrix)))
+})
+
