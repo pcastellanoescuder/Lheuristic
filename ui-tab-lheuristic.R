@@ -4,14 +4,11 @@ fluidRow(
          wellPanel(
            
            h3("Select L-shape parameters:", align = "left"),
-           fluidRow(column(8,
-                           numericInput("Ngenes",label = "Number of genes to analyse", 
-                                        value = 200, min = 0)),
-                    column(4,br(),
-                           checkboxInput("allgenes", label="select all"), value=FALSE)),
+           numericInput("Ngenes",label = "Number of genes to analyse", value = 200, min = 0),
+           checkboxInput("allgenes", label="Analyse all genes", value=FALSE),
            
-           fluidRow(column(3, offset = 8, actionButton("submit","Select genes", icon("check"),
-                                                       style="color: #fff; background-color: #CD0000; border-color: #9E0000"))),
+           actionButton("submit","Select genes", icon("check"),
+                                                       style="color: #fff; background-color: #CD0000; border-color: #9E0000"),
       
            br(),
            br(),
@@ -89,7 +86,7 @@ fluidRow(
                     column(3,
                            numericInput("wf33", label = NULL, value = 0))
            ),
-           fluidRow(column(3, offset = 9, actionButton("reset","Reset")))
+           actionButton("reset","Reset")
   )),
 
 column(width = 8,

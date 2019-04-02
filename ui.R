@@ -13,7 +13,8 @@ dashboardPage(
                 menuItem("Upload Data", tabName = "upload", icon = icon("upload")),
                 menuItem("Analysis", tabName = "analysis", icon = icon("sliders"), startExpanded = FALSE,
                          menuSubItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
-                         menuSubItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined"))),
+                         menuSubItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined")),
+                         menuSubItem("Intersection", tabName = "overlap", icon = icon("layer-group"))),
                 menuItem("Help", tabName = "help", icon = icon("question"))
                 
               )),
@@ -35,7 +36,9 @@ dashboardPage(
                   tabItem(tabName = "upload",
                           source("ui-tab-upload.R",local=TRUE)$value),
                   tabItem(tabName = "help",
-                          source("ui-tab-help.R",local=TRUE)$value)
+                          source("ui-tab-help.R",local=TRUE)$value),
+                  tabItem(tabName = "overlap",
+                          source("ui-tab-overlap.R",local=TRUE)$value)
                   
                 ),
                 

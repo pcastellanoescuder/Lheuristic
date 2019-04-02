@@ -20,6 +20,7 @@ shinyServer(function(input, output, clientData, session) {
   source("server-upload.R",local = TRUE)
   source("server-correlations.R",local = TRUE)
   source("server-lheuristic.R",local = TRUE)
+  source("server-overlap.R",local = TRUE)
 
 })
 
