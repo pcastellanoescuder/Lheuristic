@@ -142,40 +142,60 @@ output$corr_table <- renderDataTable({
   
 })
 
-output$corr_table <- DT::renderDataTable({
+Intersection <- 
   
-  met <- metFile()
-  met <- as.data.frame(t(met))
+  reactive({
+    
+    met <- metFile()
+    met <- as.data.frame(t(met))
+    
+    exp <- exprFile()
+    exp <- as.data.frame(t(exp))
+    
+    intersection <- data.frame(Gene = rep(NA, ncol(met)), Correlation = rep(NA, ncol(met)), p.value = rep(NA, ncol(met)))
+    
+    for (i in 1:ncol(met)){
+      intersection$Gene[i] <- colnames(met)[i]
+      intersection$Correlation[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$estimate,3)
+      intersection$p.value[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$p.value,3)
+    }
+    
+    intersection$FDR <- round(p.adjust(intersection$p.value, method = "fdr"),3)
+    
+    intersection <- intersection[abs(intersection$Correlation) > input$rcoef ,]
+    
+    if (input$pval_type == "raw"){
+      intersection <- intersection[intersection$p.value < input$pval ,]
+    } 
+    
+    if (input$pval_type == "corrected"){
+      intersection <- intersection[intersection$FDR < input$fdr ,]
+    } 
+    
+    return(list(intersection = intersection))
+    
+  })
+
+output$corr_table <- renderDataTable({
   
-  exp <- exprFile()
-  exp <- as.data.frame(t(exp))
+  intersection <- Intersection()$intersection
   
-  my_cor_matrix <- data.frame(Gene = rep(NA, ncol(met)), Correlation = rep(NA, ncol(met)), p.value = rep(NA, ncol(met)))
-  
-  for (i in 1:ncol(met)){
-    my_cor_matrix$Gene[i] <- colnames(met)[i]
-    my_cor_matrix$Correlation[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$estimate,3)
-    my_cor_matrix$p.value[i] <- round(cor.test(met[, colnames(met)[i]], exp[, colnames(exp) == colnames(met)[1]])$p.value,3)
-  }
-  
-  my_cor_matrix$FDR <- round(p.adjust(my_cor_matrix$p.value, method = "fdr"),3)
-  
-  datatable(my_cor_matrix, 
-                filter = 'none',extensions = 'Buttons',
-                escape=FALSE,  rownames=FALSE, class = 'cell-border stripe',
-                options = list(
-                  dom = 'Bfrtip',
-                  buttons = 
-                    list("copy", "print", list(
-                      extend="collection",
-                      buttons=list(list(extend="csv",
-                                        filename="correlation_table"),
-                                   list(extend="excel",
-                                        filename="correlation_table"),
-                                   list(extend="pdf",
-                                        filename="correlation_table")),
-                      text="Dowload")),
-                  order=list(list(2, "desc")),
-                  pageLength = nrow(my_cor_matrix)))
+  datatable(intersection, 
+            filter = 'none',extensions = 'Buttons',
+            escape=FALSE,  rownames=FALSE, class = 'cell-border stripe',
+            options = list(
+              dom = 'Bfrtip',
+              buttons = 
+                list("copy", "print", list(
+                  extend="collection",
+                  buttons=list(list(extend="csv",
+                                    filename="correlation_table"),
+                               list(extend="excel",
+                                    filename="correlation_table"),
+                               list(extend="pdf",
+                                    filename="correlation_table")),
+                  text="Dowload")),
+              order=list(list(2, "desc")),
+              pageLength = nrow(intersection)))
 })
 

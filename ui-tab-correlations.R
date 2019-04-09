@@ -13,7 +13,24 @@ fluidRow(
                   
                   radioButtons("corr_method", "Correlation Method:", c("Pearson" = "pearson",
                                                                        "Spearman" = "spearman",
-                                                                       "Kendall" = "kendall"))
+                                                                       "Kendall" = "kendall")),
+                  
+                  h3("Select Table Parameters:"),
+                  
+                  numericInput("rcoef", "Select genes with a 
+                       correlation coeficient (absolut value) above:", min = 0, max = 1, value = 0.7),
+                  
+                  selectInput("pval_type", "Which p value do you want to use for filter?", 
+                              choices = c("None" = "none", "Raw p value" = "raw", "Corrected p value" = "corrected"),
+                              selected = "none"),
+                  
+                  conditionalPanel("input.pval_type == 'raw'",
+                                   numericInput("pval", "Select genes with a raw p value below:",
+                                                min = 0, max = 1, value = 0.01)),
+                  
+                  conditionalPanel("input.pval_type == 'corrected'",
+                                   numericInput("fdr", "Select genes with an adjusted p value (fdr) below:",
+                                                min = 0, max = 1, value = 0.05))
   )),
   
   column(width = 8,
