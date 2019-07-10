@@ -14,7 +14,7 @@ dashboardPage(
                 menuItem("Analysis", tabName = "analysis", icon = icon("sliders"), startExpanded = FALSE,
                          menuSubItem("Correlations", tabName = "correlations", icon = icon("chart-line")),
                          menuSubItem("L-heuristic", tabName = "lheuristic", icon = icon("ruler-combined")),
-                         menuSubItem("Intersection", tabName = "overlap", icon = icon("layer-group"))),
+                         menuSubItem("Overlap", tabName = "overlap", icon = icon("layer-group"))),
                 menuItem("Help", tabName = "help", icon = icon("question"))
                 
               )),

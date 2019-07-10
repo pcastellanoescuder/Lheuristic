@@ -5,7 +5,7 @@ fluidRow(
       tabPanel("Venn Diagram", 
                plotOutput("venn_diagram")),
       
-      tabPanel("Intersection Table", 
+      tabPanel("Overlap Table", 
                dataTableOutput("intersection_table")),
       
       tabPanel("All Genes Table", 
