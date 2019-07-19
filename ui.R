@@ -1,4 +1,4 @@
-options(repos = BiocInstaller::biocinstallRepos())
+options(repos = BiocManager::repositories())
 getOption("repos")
 
 source("helpers.R")

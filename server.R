@@ -3,8 +3,8 @@
 #---------------------------------------------------------------
 
 # We will use the set of functions in gridFunctions.R
-source("gridFunctions.R")
-# source("https://raw.githubusercontent.com/alexsanchezpla/scripts/master/Selecting_Genes_Regulated_by_Methylation/Rcode/gridFunctions.R")
+# source("gridFunctions.R")
+library(Lheuristic)
 
 #Set working directory
 workingDir <- getwd()
